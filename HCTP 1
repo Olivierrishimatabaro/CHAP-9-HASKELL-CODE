@@ -1,0 +1,20 @@
+type Entite a = (a, String)
+
+user1 :: Entite Int
+user1 = (101, "Addr-XYZ")
+
+user2 :: Entite String
+user2 = ("Alice", "Addr-ABC")
+
+user3 :: Entite Bool
+user3 = (True, "Addr-DEF")
+
+showEntite :: (Show a) => Entite a -> String
+showEntite (val, addr) = "Entite: " ++ show val ++ " @ " ++ addr
+
+main :: IO ()
+main = do
+    putStrLn "=== HC9T1 : Test des Entites ==="
+    putStrLn (showEntite user1)
+    putStrLn (showEntite user2)
+    putStrLn (showEntite user3)
