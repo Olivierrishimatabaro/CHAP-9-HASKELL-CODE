@@ -1,0 +1,14 @@
+
+data Box a = Vide | Has a
+  deriving (Show, Eq)
+
+fromBox :: a -> Box a -> a
+fromBox def Vide    = def
+fromBox _   (Has x) = x
+
+main :: IO ()
+main = do
+  print $ fromBox (0 :: Int) (Has 42)
+  print $ fromBox (0 :: Int) Vide
+  print $ fromBox "def" (Has "hello i'm olivier rishi matabaro")
+  print $ fromBox "def" (Vide :: Box String)
