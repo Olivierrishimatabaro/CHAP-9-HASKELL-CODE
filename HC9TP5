@@ -1,0 +1,33 @@
+data Forme a
+  = Cercle
+      { couleur :: a
+      , rayon   :: Float
+      }
+  | Rectangle
+      { couleur :: a
+      , largeur :: Float
+      , hauteur :: Float
+      }
+  deriving (Show, Eq)
+
+aire :: Forme a -> Float
+aire (Cercle _ r)      = pi * r * r
+aire (Rectangle _ l h) = l * h
+
+setCouleur :: a -> Forme b -> Forme a
+setCouleur new (Cercle _ r)      = Cercle new r
+setCouleur new (Rectangle _ l h) = Rectangle new l h
+
+main :: IO ()
+main = do
+  let c1 = Cercle { couleur = "rouge", rayon = 5.0 }
+  let r1 = Rectangle { couleur = "bleu", largeur = 10.0, hauteur = 20.0 }
+
+  putStrLn ("Forme 1 : " ++ show c1)
+  putStrLn ("Aire du cercle : " ++ show (aire c1))
+
+  putStrLn ("Forme 2 : " ++ show r1)
+  putStrLn ("Aire du rectangle : " ++ show (aire r1))
+
+  let c2 = setCouleur "vert" c1
+  putStrLn ("Nouveau cercle recoloré : " ++ show c2)
