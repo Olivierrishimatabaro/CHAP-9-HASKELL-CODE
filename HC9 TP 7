@@ -1,0 +1,34 @@
+data Tweet = Tweet
+  { contenu      :: String
+  , likes        :: Int
+  , commentaires :: [Tweet]
+  } deriving (Show, Eq)
+
+tweet1 :: Tweet
+tweet1 = Tweet
+  { contenu = "Cardano blockchain par excellence"
+  , likes = 95
+  , commentaires =
+      [ Tweet { contenu = "Cardano a une vision solide."
+              , likes = 20
+              , commentaires = []
+              }
+      , Tweet { contenu = "La recherche académique derrière Cardano est unique."
+              , likes = 12
+              , commentaires =
+                  [ Tweet { contenu = "Exact, c’est ce qui la différencie."
+                          , likes = 5
+                          , commentaires = []
+                          }
+                  ]
+              }
+      ]
+  }
+
+engagement :: Tweet -> Int
+engagement (Tweet _ nb coms) =
+  nb + sum (map engagement coms)
+
+main :: IO ()
+main = do
+  putStrLn ("Engagement total du tweet1 : " ++ show (engagement tweet1))
