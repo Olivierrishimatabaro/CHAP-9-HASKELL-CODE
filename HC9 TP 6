@@ -1,0 +1,30 @@
+data Tweet = Tweet
+  { contenu      :: String
+  , likes        :: Int
+  , commentaires :: [Tweet]
+  } deriving (Show, Eq)
+
+tweet1 :: Tweet
+tweet1 = Tweet
+  { contenu = "Polkadot cardano par excellence"
+  , likes = 120
+  , commentaires =
+      [ Tweet { contenu = "Je confirme, cardano est puissant !"
+              , likes = 15
+              , commentaires = []
+              }
+      , Tweet { contenu = "J’attends de voir son évolution."
+              , likes = 8
+              , commentaires =
+                  [ Tweet { contenu = "Bonne remarque 👌"
+                          , likes = 3
+                          , commentaires = []
+                          }
+                  ]
+              }
+      ]
+  }
+
+main :: IO ()
+main = do
+  print tweet1
