@@ -1,0 +1,22 @@
+data Sequence a = Vide
+                | Noeud a (Sequence a)
+                deriving (Show, Eq)
+
+longueur :: Sequence a -> Int
+longueur Vide = 0
+longueur (Noeud _ reste) = 1 + longueur reste
+
+depuisListe :: [a] -> Sequence a
+depuisListe []     = Vide
+depuisListe (x:xs) = Noeud x (depuisListe xs)
+
+versListe :: Sequence a -> [a]
+versListe Vide = []
+versListe (Noeud x reste) = x : versListe reste
+
+main :: IO ()
+main = do
+    let s1 = depuisListe [1,2,3,4,5]
+    print s1
+    print (longueur s1)
+    print (versListe s1)
