@@ -1,0 +1,16 @@
+-- Main.hs
+data Sequence a = Empty | Cons a (Sequence a) deriving (Show, Eq)
+
+elemSeq :: Eq a => a -> Sequence a -> Bool
+elemSeq _ Empty = False
+elemSeq x (Cons y ys) = x == y || elemSeq x ys
+
+type Address = (String, Int, String)
+
+s :: Sequence Address
+s = Cons ("Main St.", 555, "Goma") (Cons ("Cardano St.", 999, "Kigali") Empty)
+
+main :: IO ()
+main = do
+  print (elemSeq ("Main St.", 555, "Goma") s)   -- True
+  print (elemSeq ("Street X", 1, "Bukavu") s)   -- False
