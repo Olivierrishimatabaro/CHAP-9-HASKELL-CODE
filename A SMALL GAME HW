@@ -1,0 +1,104 @@
+-- Déplacements
+data Move = MoveUp | MoveDown | MoveLeft | MoveRight
+  deriving (Show, Eq)
+
+-- Types de cases
+data Cell = Wall | Path | Player | Exit
+  deriving (Eq)
+
+type Maze = [[Cell]]
+type Position = (Int, Int)
+
+-- Affichage simple
+instance Show Cell where
+  show Wall   = "#"
+  show Path   = "."
+  show Player = "P"
+  show Exit   = "E"
+
+showMaze :: Maze -> String
+showMaze = unlines . map (concatMap show)
+
+-- Labyrinthe de test
+testMaze :: Maze
+testMaze =
+  [ [Wall, Player, Wall, Wall]
+  , [Wall, Path,   Path, Wall]
+  , [Wall, Wall,   Exit, Wall]
+  , [Wall, Wall,   Path, Wall]
+  ]
+
+-- Trouver la position du joueur
+findPlayer :: Maze -> Position
+findPlayer maze = head [(i,j) | (i,row) <- zip [0..] maze,
+                                (j,cell) <- zip [0..] row,
+                                cell == Player]
+
+-- Vérifier validité
+isValid :: Maze -> Position -> Bool
+isValid maze (x,y) =
+  x >= 0 && y >= 0 &&
+  x < length maze &&
+  y < length (maze !! x) &&
+  let c = maze !! x !! y
+  in c == Path || c == Exit
+
+-- Mettre à jour labyrinthe
+updateMaze :: Position -> Position -> Maze -> Maze
+updateMaze (x,y) (nx,ny) maze =
+  [ [ newCell i j | (j,_) <- zip [0..] row ]
+  | (i,row) <- zip [0..] maze ]
+  where
+    newCell i j
+      | (i,j) == (x,y)   = Path
+      | (i,j) == (nx,ny) = Player
+      | otherwise        = maze !! i !! j
+
+-- Déplacer le joueur
+move :: Maze -> Move -> Maze
+move maze m =
+  let (x,y)   = findPlayer maze
+      (nx,ny) = case m of
+                  MoveUp    -> (x-1, y)
+                  MoveDown  -> (x+1, y)
+                  MoveLeft  -> (x, y-1)
+                  MoveRight -> (x, y+1)
+  in if isValid maze (nx,ny)
+        then updateMaze (x,y) (nx,ny) maze
+        else maze
+
+-- Afficher message selon le choix
+showCurrentChoice :: Maze -> Move -> String
+showCurrentChoice maze m =
+  let (x,y) = findPlayer maze
+      (nx,ny) = case m of
+                  MoveUp    -> (x-1, y)
+                  MoveDown  -> (x+1, y)
+                  MoveLeft  -> (x, y-1)
+                  MoveRight -> (x, y+1)
+      inBounds = nx >= 0 && ny >= 0 && nx < length maze && ny < length (maze !! nx)
+  in if not inBounds || (maze !! nx !! ny == Wall)
+        then "Vous avez heurté un mur !"
+     else if maze !! nx !! ny == Exit
+        then "Félicitations, vous avez trouvé la sortie !"
+     else
+        "Vous devez encore choisir un mouvement."
+
+-- Nouvelle version de solveMaze : affiche le labyrinthe et le message à chaque déplacement
+solveMazeInteractive :: Maze -> [Move] -> IO Maze
+solveMazeInteractive maze [] = return maze
+solveMazeInteractive maze (m:ms) = do
+  putStrLn $ "Déplacement choisi : " ++ show m
+  putStrLn $ showCurrentChoice maze m
+  let newMaze = move maze m
+  putStrLn $ showMaze newMaze
+  solveMazeInteractive newMaze ms
+
+-- Main pour tester
+main :: IO ()
+main = do
+  putStrLn "=== Début du mini-jeu ==="
+  putStrLn $ showMaze testMaze
+  let moves = [MoveDown, MoveRight, MoveRight] -- exemple de séquence
+  _ <- solveMazeInteractive testMaze moves
+  putStrLn "=== Fin du mini-jeu ==="
